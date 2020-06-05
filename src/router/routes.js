@@ -2,7 +2,8 @@
 import Home from '../pages/Home'
 import Search from '../pages/Search'
 import Register from '../pages/Register'
-import Login from '../pages/Login'
+// import Login from '../pages/Login'
+import Login from '@/pages/Login'
 
 export default [
     {
@@ -10,15 +11,22 @@ export default [
         component: Home
     },
     {
-        path: '/search',
+        name: 'search', //一旦有params参数，想用push的对象写法，必须有name配置
+        path: '/search/:keyword?', // 带：的对应的部分就是params参数
         component: Search
     },
     {
         path: '/register',
-        component: Register
+        component: Register,
+        meta: { 
+            isHideFooter:true
+        }
     },
     {
         path: '/login',
-        component: Login
+        component: Login,
+        meta: { 
+            isHideFooter:true
+        }
     }
 ]
