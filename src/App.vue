@@ -1,10 +1,23 @@
 <template>
-  <div>App</div>
+  <div>
+    <Header></Header>
+    <!-- 一级路由组件显示区域 -->
+    <router-view></router-view>
+    <Footer></Footer>
+  </div>
 </template>
 
 <script>
+import Header from './components/Header'
+import Footer from './components/Footer'
 export default {
-  name: '',
+  name: 'App',
+
+  //注册组件（局部注册，当前组件可用）
+  components: {
+    Header,
+    Footer
+  }
 }
 </script>
 

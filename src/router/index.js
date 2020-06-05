@@ -9,5 +9,6 @@ Vue.use(VueRouter)
 
 //向外暴露路由器对象
 export default new VueRouter({
+    mode: 'history', //不带#
     routes,
 })
