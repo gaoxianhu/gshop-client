@@ -8,7 +8,8 @@
           <p>尚品汇欢迎您！</p>
           <p>
             <span>请</span>
-            <router-link to="login">登录 |</router-link>
+            <!-- <router-link to="login">登录 |</router-link> -->
+            <router-link :to="{path:'/login'}">登录 |</router-link>
             <router-link to="register"> 免费注册</router-link>
           </p>
         </div>
@@ -60,6 +61,7 @@
         const location = {
           name: 'search'
         }
+        //只有keyword有值，才去指定params
         if (keyword) {
           location.params = {keyword}
           location.query = {keyword2: keyword.toUpperCase()}
@@ -70,14 +72,15 @@
         // }) //使用的式vue-router3.1.0的语法（内部不会抛出错误）
 
         //使用的是vue-router新的语法，返回的是promise
-        this.$router.push(location).catch(() => {
-          //console.log('出错了')
-        })
+        // this.$router.push(location).catch(() => {
+        //   //console.log('出错了')
+        // })
         // this.$router.push({
         //   name: 'search',
         //   params:{keyword: keyword},
         //   query: {keyword2: keyword.toUpperCase()}
         // })
+        this.$router.push(location)
       }
     }
   }
