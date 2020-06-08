@@ -4,7 +4,7 @@
 
 
 import axios from 'axios'
-import Nprogress from 'nprogress'
+import NProgress from 'nprogress'
 
 //1.配置通用的基础路径和超时
 const instance = axios.create({
@@ -14,21 +14,22 @@ const instance = axios.create({
 })
 
 //注册请求拦截器
-axios.interceptors.request.use(config => { //真正发送请求前执行
+// axios.interceptors.request.use(config => { //不正确
+instance.interceptors.request.use(config => { //真正发送请求前执行
     //2.1：显示请求进度条
-    Nprogress.start()
+    NProgress.start()
     return config
 })
 //注册响应拦截器
-axios.interceptors.response.use(
+instance.interceptors.response.use(
     response => {
         //2.2：隐藏进度条
-        Nprogress.done()
+        NProgress.done()
         // return response //请求成功后的回调
         return response.data//请求成功后的回调
     },
     error => { //请求失败后的回调
-        Nprogress.done()
+        NProgress.done()
         alert(error.message || '未知错误')
         //要么抛出error，或者返回一个失败的promise
         // throw error

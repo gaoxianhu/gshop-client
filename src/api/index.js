@@ -22,8 +22,8 @@ export function reqLogin(mobile, password) {
 
 //首页三级分类
 ///api/product/getBaseCategoryList  GET请求
-export const reqCategorys = () => ajax('/product/getBaseCategoryList')
+export const reqCategoryList = () => ajax('/product/getBaseCategoryList')
 
-// export function reqCategorys() {
+// export function reqCategoryList() {
 //     return ajax('/product/getBaseCategoryList')
 // }
