@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import TypeNav from './components/TypeNav'
+import '@/mock/mockServer' //引入加载
 
 Vue.component('TypeNav',TypeNav)
 

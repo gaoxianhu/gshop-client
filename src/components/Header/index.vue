@@ -64,8 +64,10 @@
         //只有keyword有值，才去指定params
         if (keyword) {
           location.params = {keyword}
-          location.query = {keyword2: keyword.toUpperCase()}
         }
+        //如果当前路由已经有categoryName/category1Id/category2Id/category3Id,携带上
+        //有什么带什么：如果有自然带上了，如果没有就不携带了
+        location.query = this.$route.query
         // this.$router.push(location) //重复跳转抛出错误
         // this.$router.push(location,() => {
         //   console.log('成功跳转的回调')

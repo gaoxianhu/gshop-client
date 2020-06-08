@@ -61,7 +61,7 @@
         name: 'TypeNav',
         data() {
             return {
-                currentIndex: -2, //标识哪个下标的分类项需要显示的子分类列表
+                currentIndex: -1, //标识哪个下标的分类项需要显示的子分类列表
                 isShowFirst: this.$route.path === '/'
             }
         },
@@ -82,7 +82,7 @@
         },
         mounted() {
             //通过store对象的dispatch()来触发异步action getCategoryList执行请求获取的数据
-            this.getCategoryList() //数据从接口转移到vuex的state中
+            // this.getCategoryList() //数据从接口转移到vuex的state中
         },
         methods: {
             ...mapActions(['getCategoryList']), //getCategoryList(){this.$store.dispatch('getCategoryList')}
@@ -155,6 +155,11 @@
                 const location = {
                     name: 'search',
                     query
+                }
+                //取出当前params中的keyword，如果有值，携带上
+                const keyword = this.$route.params.keyword
+                if (keyword) {
+                    location.params = {keyword}
                 }
                 this.$router.push(location)
                 //自动隐藏一级列表
