@@ -4,7 +4,7 @@
       <div class="fl key brand">品牌</div>
       <div class="value logos">
         <ul class="logo-list">
-          <li v-for="tm in trademarkList" :key="tm.tmId">{{tm.tmName}}</li>
+          <li v-for="tm in trademarkList" :key="tm.tmId" @click="setTrademark(`${tm.tmId}:${tm.tmName}`)">{{tm.tmName}}</li>
         </ul>
       </div>
       <div class="ext">
@@ -16,7 +16,7 @@
       <div class="fl key">{{attr.attrName}}</div>
       <div class="fl value">
         <ul class="type-list">
-          <li v-for="value in attr.attrValueList" :key="value">
+          <li v-for="value in attr.attrValueList" :key="value" @click="$emit('addProp', `${attr.attrId}:${value}:${attr.attrName}`)">
             <a>{{value}}</a>
           </li>
         </ul>
@@ -30,6 +30,11 @@
   import {mapState, mapGetters} from 'vuex'
   export default {
     name: 'SearchSelector',
+
+    props:{
+      setTrademark: Function
+    },
+
     computed: {
       ...mapState({
         trademarkList2: state => state.search.productList.trademarkList,

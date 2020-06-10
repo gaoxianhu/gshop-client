@@ -52,6 +52,14 @@
         keyword: ''
       }
     },
+
+    mounted () {
+      // 在Header中：通过事件总线对象绑定自定义事件监听，在回调中删除输入数据
+      this.$bus.$on('removeKeyword', () => {
+        this.keyword = ''
+      })
+    },
+
     methods: {
       search(){
         const {keyword} = this
@@ -82,7 +90,13 @@
         //   params:{keyword: keyword},
         //   query: {keyword2: keyword.toUpperCase()}
         // })
-        this.$router.push(location)
+        //如果当前没有在search，用push，否则用replace
+        // if (this.$route.name !== 'search') {
+        if (this.$route.path.indexOf('/search') !== 0) {
+          this.$router.push(location)
+        } else {
+          this.$router.replace(location)
+        }
       }
     }
   }
