@@ -41,3 +41,19 @@ export const reqProductList = (options) => ajax.post('/list',options)
 
 // 获取商品详情信息
 export const reqDetailInfo = (skuId) => ajax.get(`/item/${skuId}`)
+
+//获取购物车列表
+export const reqShopCart = () => ajax.get('/cart/cartList')
+
+//添加到购物车（对已有物品进行数量改动）
+//skuId: 指商品的ID
+//skuNum: 商品数量，正数代表增加，负数代表减少
+export const reqAddToCart = (skuId, skuNum) => ajax.post(`/cart/addToCart/${skuId}/${skuNum}`)
+
+//切换某个购物项的选中状态
+//skuId: 指商品的ID
+//isChecked: 商品选中状态，'0'代表取消选中，'1'代表选中
+export const reqCheckCartItem = (skuId, isChecked) => ajax.get(`/cart/checkCart/${skuId}/${isChecked}`)
+
+//删除购物项商品
+export const reqDeleteCartItem = (skuId) => ajax.delete(`/cart/deleteCart/${skuId}`)

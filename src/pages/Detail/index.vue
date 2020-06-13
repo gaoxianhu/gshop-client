@@ -84,12 +84,12 @@
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input autocomplete="off" class="itxt">
-                <a href="javascript:" class="plus">+</a>
-                <a href="javascript:" class="mins">-</a>
+                <input autocomplete="off" class="itxt" v-model="skuNum">
+                <a href="javascript:" class="plus" @click="skuNum = skuNum * 1 + 1">+</a>
+                <a href="javascript:" class="mins" @click="skuNum = skuNum > 1 ? skuNum - 1 : skuNum">-</a>
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <a href="javascript:" @click="addToCart">加入购物车</a>
               </div>
             </div>
           </div>
@@ -349,7 +349,8 @@
 
     data () {
       return {
-        currentIndex: 0
+        currentIndex: 0, //当前要显示图片的下标
+        skuNum: 1, //商品的数量
       }
     },
 
@@ -377,6 +378,50 @@
         valueList.forEach(value => value.isChecked = '0')
         //将指定的value选中
         value.isChecked = '1'
+      },
+      //将当前商品添加到购物车
+      async addToCart(){
+        //收集数据
+        const skuNum = this.skuNum
+        const skuId = this.$route.params.id
+        //dispatch()
+        //方式一： 使用回调函数数据
+        //this.$store.dispatch('addToCart', {skuNum, skuId, callback: this.callback})
+        // this.$store.dispatch('addToCart', {skuNum: undefined, skuId: undefined, callback: this.callback})
+
+        //方式二： 利用dispatch()的返回值是promise
+        // const promise = this.$store.dispatch('addToCart2', {skuNum, skuId})
+        // promise.then(() => { //成功
+        //   this.$router.push('/addcartsuccess')
+        // }).catch(error => { //失败
+        //   alert(error.message)
+        // })
+        // try {
+        //   await this.$store.dispatch('addToCart2', {skuNum, skuId})
+        //   this.$router.push('/addcartsuccess')
+        // } catch(error) {
+        //   alert(error.message)
+        // }
+        const errorMsg = await this.$store.dispatch('addToCart3', {skuNum, skuId})
+        if (errorMsg) { //失败
+          alert(error.message)
+        } else { //成功
+          //将当前商品的skuInfo的json文本保存到sessionStorage
+          window.sessionStorage.setItem('SKU_INFO_KEY', JSON.stringify(this.skuInfo))
+          //跳转路由,携带skuNum的query参数
+          this.$router.push({path: '/addcartsuccess', query: {skuNum}})
+        }
+        //如果成功了，跳转到成功的路由
+        //如果失败了，提示
+      },
+      //再异步action执行成功或失败后，才回调执行的方法
+      //errorMsg: 需要显示的错误信息，如果成功了，没有值
+      callback(errorMsg) {
+        if (errorMsg) { //如果失败了，提示
+          alert(errorMsg)
+        } else { //如果成功了，跳转到成功的路由
+          this.$router.push('/addcartsuccess')
+        }
       }
     },
     
