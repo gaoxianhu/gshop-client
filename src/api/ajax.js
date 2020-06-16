@@ -5,6 +5,7 @@
 
 import axios from 'axios'
 import NProgress from 'nprogress'
+import store from '@/store'
 
 //1.配置通用的基础路径和超时
 const instance = axios.create({
@@ -18,6 +19,7 @@ const instance = axios.create({
 instance.interceptors.request.use(config => { //真正发送请求前执行
     //2.1：显示请求进度条
     NProgress.start()
+    config.headers['userTempId'] = store.state.user.userTempId
     return config
 })
 //注册响应拦截器

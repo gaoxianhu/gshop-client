@@ -11,88 +11,34 @@
         <div class="cart-th6">操作</div>
       </div>
       <div class="cart-body">
-        <ul class="cart-list">
+        <ul class="cart-list" v-for="item in cartList" :key="item.id">
           <li class="cart-list-con1">
-            <input type="checkbox" name="chk_list">
+            <!-- isCheck: 0:不勾选 , 1: 勾选-->
+            <input type="checkbox" name="chk_list" :checked="item.isChecked===1" @change="checkCartItem(item)">
           </li>
           <li class="cart-list-con2">
-            <img src="./images/goods1.png">
-            <div class="item-msg">米家（MIJIA） 小米小白智能摄像机增强版 1080p高清360度全景拍摄AI增强</div>
-          </li>
-          <li class="cart-list-con3">
-            <div class="item-txt">语音升级款</div>
+            <img :src="item.imgUrl">
+            <div class="item-msg">{{item.skuName}}</div>
           </li>
           <li class="cart-list-con4">
-            <span class="price">399.00</span>
+            <span class="price">{{item.cartPrice}}</span>
           </li>
           <li class="cart-list-con5">
-            <a href="javascript:void(0)" class="mins">-</a>
-            <input autocomplete="off" type="text" value="1" minnum="1" class="itxt">
-            <a href="javascript:void(0)" class="plus">+</a>
+            <a href="javascript:void(0)" class="mins" @click="changeItemCount(item, -1)">-</a>
+            <!-- 
+              在vue中和原生DOM中的input输入框
+                input事件：输入改变时触发
+                change事件：失去焦点才触发
+             -->
+            <input autocomplete="off" type="text" class="itxt" :value="item.skuNum"
+              @change="changeItemCount(item, $event.target.value - item.skuNum, $event)">
+            <a href="javascript:void(0)" class="plus" @click="changeItemCount(item, 1)">+</a>
           </li>
           <li class="cart-list-con6">
-            <span class="sum">399</span>
+            <span class="sum">{{item.cartPrice * item.skuNum}}</span>
           </li>
           <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
-            <br>
-            <a href="#none">移到收藏</a>
-          </li>
-        </ul>
-
-        <ul class="cart-list">
-          <li class="cart-list-con1">
-            <input type="checkbox" name="chk_list" id="" value="">
-          </li>
-          <li class="cart-list-con2">
-            <img src="./images/goods2.png">
-            <div class="item-msg">华为（MIJIA） 华为metaPRO 30 浴霸4摄像 超清晰</div>
-          </li>
-          <li class="cart-list-con3">
-            <div class="item-txt">黑色版本</div>
-          </li>
-          <li class="cart-list-con4">
-            <span class="price">5622.00</span>
-          </li>
-          <li class="cart-list-con5">
-            <a href="javascript:void(0)" class="mins">-</a>
-            <input autocomplete="off" type="text" value="1" minnum="1" class="itxt">
-            <a href="javascript:void(0)" class="plus">+</a>
-          </li>
-          <li class="cart-list-con6">
-            <span class="sum">5622</span>
-          </li>
-          <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
-            <br>
-            <a href="#none">移到收藏</a>
-          </li>
-        </ul>
-
-        <ul class="cart-list">
-          <li class="cart-list-con1">
-            <input type="checkbox" name="chk_list" id="" value="">
-          </li>
-          <li class="cart-list-con2">
-            <img src="./images/goods3.png">
-            <div class="item-msg">iphone 11 max PRO 苹果四摄 超清晰 超费电 超及好用</div>
-          </li>
-          <li class="cart-list-con3">
-            <div class="item-txt">墨绿色</div>
-          </li>
-          <li class="cart-list-con4">
-            <span class="price">11399.00</span>
-          </li>
-          <li class="cart-list-con5">
-            <a href="javascript:void(0)" class="mins">-</a>
-            <input autocomplete="off" type="text" value="1" minnum="1" class="itxt">
-            <a href="javascript:void(0)" class="plus">+</a>
-          </li>
-          <li class="cart-list-con6">
-            <span class="sum">11399</span>
-          </li>
-          <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
+            <a href="javascript:;" class="sindelet" @click="deleteCartItem(item)">删除</a>
             <br>
             <a href="#none">移到收藏</a>
           </li>
@@ -101,20 +47,20 @@
     </div>
     <div class="cart-tool">
       <div class="select-all">
-        <input class="chooseAll" type="checkbox">
+        <input class="chooseAll" type="checkbox" v-model="checkAll">
         <span>全选</span>
       </div>
       <div class="option">
-        <a href="#none">删除选中的商品</a>
+        <a href="javascript:;" @click="deleteCheckedCartItems">删除选中的商品</a>
         <a href="#none">移到我的关注</a>
         <a href="#none">清除下柜商品</a>
       </div>
       <div class="money-box">
         <div class="chosed">已选择
-          <span>0</span>件商品</div>
+          <span>{{totalCount}}</span>件商品</div>
         <div class="sumprice">
           <em>总价（不含运费） ：</em>
-          <i class="summoney">0</i>
+          <i class="summoney">{{totalPrice}}</i>
         </div>
         <div class="sumbtn">
           <a class="sum-btn" href="###" target="_blank">结算</a>
@@ -125,8 +71,104 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
   export default {
     name: 'ShopCart',
+
+    computed: {
+      ...mapState({
+        cartList: state => state.shopCart.cartList
+      }),
+      ...mapGetters(['totalCount', 'totalPrice', 'isCheckAll']),
+      //包含getter和setter的计算属性
+      checkAll: {
+        get() {
+          return this.isCheckAll
+        },
+        //当用户点击改变勾选框状态时调用
+        async set(value) { //标识当前是否勾选的布尔值true/false
+          try{
+            await this.$store.dispatch('checkAllCartItems', value)
+            this.$store.dispatch('getCartList')
+          }catch(error){
+            alert(error.message)
+          }
+        }
+      }
+    },
+
+    mounted () {
+      this.$store.dispatch('getCartList')
+    },
+
+    methods: {
+      //勾选/不勾选指定的购物项
+      async checkCartItem(item) {
+        const skuId = item.skuId
+        const isChecked = item.isChecked === 1 ? '0' : '1'
+        try{
+          //分发触发checkCartItem action调用 ==> 发请求
+          await this.$store.dispatch('checkCartItem', {skuId, isChecked})
+          //如果成功了，重新获取购物车数据显示
+          this.$store.dispatch('getCartList')
+        }catch(error){
+          //如果失败了，提示
+          alert(error.message)
+        } 
+      },
+      //修改商品数量
+      //最终的数量必须大于0，否则让其为原来的值
+      async changeItemCount(item, numChange, event) {
+        
+        //计算最终的目标数量，只有大于0才去发请求
+        const num = item.skuNum + numChange
+        if (num > 0) {
+          //准备数据
+          const skuId = item.skuId
+          const skuNum = numChange
+          try{
+            //分发异步action addToCart2 ==> 提交请求
+            await this.$store.dispatch('addToCart2', {skuId, skuNum})
+            //如果成功了，重新获取购物车数据显示
+            this.$store.dispatch('getCartList')
+          }catch(error){
+            //如果失败了，提示
+            alert(error.message)
+          } 
+        }else {
+          //否则，置为原本的值(手动输入了一个小于等于0的值，或者输入了一个非数字)
+          if (event) {
+            event.target.value = item.skuNum
+          }
+        }
+      },
+      //删除指定购物项
+      async deleteCartItem(item) {
+        if (window.confirm(`确定删除${item.skuName}吗?`)) {
+          try{
+            //分发一个异步action
+            await this.$store.dispatch('deleteCartItem', item.skuId)
+            //异步请求操作成功了
+            this.$store.dispatch('getCartList')
+          }catch(error){ //异步请求操作失败了
+            alert(error.message)
+          }
+        }
+      },
+      //删除所有选中的购物项
+      async deleteCheckedCartItems() {
+        if (window.confirm(`确定删除吗?`)) {
+          try{
+            //分发一个异步action
+            await this.$store.dispatch('deleteCheckedCartItems')
+            //异步请求操作成功了
+            this.$store.dispatch('getCartList')
+          }catch(error){ //异步请求操作失败了
+            alert(error.message)
+          }
+        }
+      }
+    }
   }
 </script>
 
@@ -153,7 +195,7 @@
         }
 
         .cart-th1 {
-          width: 25%;
+          width: 5%;
 
           input {
             vertical-align: middle;
@@ -165,14 +207,14 @@
         }
 
         .cart-th2 {
-          width: 25%;
+          width: 35%;
         }
 
         .cart-th3,
         .cart-th4,
         .cart-th5,
         .cart-th6 {
-          width: 12.5%;
+          width: 15%;
 
         }
       }
@@ -191,11 +233,11 @@
           }
 
           .cart-list-con1 {
-            width: 4.1667%;
+            width: 5%;
           }
 
           .cart-list-con2 {
-            width: 25%;
+            width: 35%;
 
             img {
               width: 82px;
@@ -211,21 +253,13 @@
             }
           }
 
-          .cart-list-con3 {
-            width: 20.8333%;
-
-            .item-txt {
-              text-align: center;
-            }
-          }
-
           .cart-list-con4 {
-            width: 12.5%;
+            width: 15%;
 
           }
 
           .cart-list-con5 {
-            width: 12.5%;
+            width: 15%;
 
             .mins {
               border: 1px solid #ddd;
@@ -258,7 +292,7 @@
           }
 
           .cart-list-con6 {
-            width: 12.5%;
+            width: 15%;
 
             .sum {
               font-size: 16px;
@@ -266,7 +300,7 @@
           }
 
           .cart-list-con7 {
-            width: 12.5%;
+            width: 15%;
 
             a {
               color: #666;

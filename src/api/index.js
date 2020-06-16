@@ -57,3 +57,11 @@ export const reqCheckCartItem = (skuId, isChecked) => ajax.get(`/cart/checkCart/
 
 //删除购物项商品
 export const reqDeleteCartItem = (skuId) => ajax.delete(`/cart/deleteCart/${skuId}`)
+
+//注册用户
+// /api/user/passport/register  POST
+export const reqRegister = (userInfo) => ajax.post('/user/passport/register', userInfo)
+
+//退出登录
+// /api/user/passport/logout  GET
+export const reqLogout = () => ajax('/user/passport/logout')
