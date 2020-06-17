@@ -31,6 +31,7 @@
                 change事件：失去焦点才触发
              -->
             <input autocomplete="off" type="text" class="itxt" :value="item.skuNum"
+              @keyup="validInput"
               @change="changeItemCount(item, $event.target.value - item.skuNum, $event)">
             <a href="javascript:void(0)" class="plus" @click="changeItemCount(item, 1)">+</a>
           </li>
@@ -63,7 +64,7 @@
           <i class="summoney">{{totalPrice}}</i>
         </div>
         <div class="sumbtn">
-          <a class="sum-btn" href="###" target="_blank">结算</a>
+          <router-link to="/trade" class="sum-btn">结算</router-link>
         </div>
       </div>
     </div>
@@ -102,6 +103,11 @@ import { mapState, mapGetters } from 'vuex'
     },
 
     methods: {
+      //检查输入
+      validInput(event){
+        const input = event.target
+        input.value = input.value.replace(/^0+|\D+0*/g,'')
+      },
       //勾选/不勾选指定的购物项
       async checkCartItem(item) {
         const skuId = item.skuId

@@ -18,14 +18,16 @@
 
               <div class="input-text clearFix">
                 <i></i>
-                <input type="text" placeholder="手机号" v-model="mobile">
-                <!-- <span class="error-msg">错误提示信息</span> -->
+                <input type="text" placeholder="手机号" v-model="mobile"
+                v-validate="{required: true,regex: /^1\d{10}$/}" name="phone" :class="{invalid: errors.has('phone')}">
+                <span class="error-msg">{{ errors.first('phone') }}</span>
               </div>
 
               <div class="input-text clearFix">
                 <i class="pwd"></i>
-                <input type="password" placeholder="请输入密码" v-model="password">
-                <!-- <span class="error-msg">错误提示信息</span> -->
+                <input type="password" placeholder="请输入密码" v-model="password"
+                name="密码" v-validate="{required: true, min: 6, max: 10}" :class="{invalid: errors.has('密码')}">
+                <span class="error-msg">{{ errors.first('密码') }}</span>
               </div>
 
               <div class="setting clearFix">
@@ -83,20 +85,38 @@
 
     methods: {
       async login() {
-        //取出搜集的数据
-        const {mobile, password} = this
+        
         //进行前台表单验证，如果不通过，显示提示，并结束
-
-        try{
-          //分发注册的异步action
-          await this.$store.dispatch('login', {mobile, password})
-          //如果成功了，跳转到首页
-          this.$router.replace('/')
-        }catch(error){
-          //如果失败了，提示失败信息
-          alert(error.message)
+        const success = await this.$validator.validateAll() // 对所有表单项进行验证
+        if (success) {
+          //取出搜集的数据
+          const {mobile, password} = this
+          try{
+            //分发注册的异步action
+            await this.$store.dispatch('login', {mobile, password})
+            //如果成功了，跳转到首页
+            this.$router.replace('/')
+          }catch(error){
+            this.password = '' //如果失败，清除输入验证码
+            //如果失败了，提示失败信息
+            alert(error.message)
+          }
         }
       }
+    },
+    //再当前组件前调用（此时组件对象还没有创建）
+    beforeRouteEnter (to, from, next) {
+      //如果已经登录，强制跳转到首页
+      // const token = this.$store.state.user.userInfo.token
+      next(vm => {
+        const token = vm.$store.state.user.userInfo.token
+        if (token) {
+          next('/')
+        } else { //如果没有登录就放行
+          next()
+        }
+      })
+      
     }
   }
 </script>
@@ -200,6 +220,9 @@
 
                 border-radius: 0 2px 2px 0;
                 outline: none;
+                &.invalid{
+                  border: solid 1px red;
+                }
               }
 
               .error-msg {

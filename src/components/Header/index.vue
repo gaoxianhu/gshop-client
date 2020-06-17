@@ -13,12 +13,12 @@
           <p v-else>
             <span>请</span>
             <!-- <router-link to="login">登录 |</router-link> -->
-            <router-link :to="{path:'/login'}">登录 |</router-link>
-            <router-link to="register"> 免费注册</router-link>
+            <router-link :to="{path:'/login'}">登录 </router-link>
+            <router-link to="register" class="register"> 免费注册</router-link>
           </p>
         </div>
         <div class="typeList">
-          <a href="###">我的订单</a>
+          <router-link to="/center">我的订单</router-link>
           <router-link to="/shopcart">我的购物车</router-link>
           <a href="###">我的尚品汇</a>
           <a href="###">尚品汇会员</a>

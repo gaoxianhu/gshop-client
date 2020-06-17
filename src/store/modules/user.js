@@ -22,7 +22,7 @@ export default{
         async reqRegister({commit},){
             const result = await reqRegister(userInfo)
             if (result.code !== 200) {
-                throw new Error(result.message || '注册失败')
+                throw new Error(result.data || '注册失败')
             }
         },
         // 登录的异步action
