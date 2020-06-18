@@ -85,22 +85,23 @@
 
     methods: {
       async login() {
-        
+        //取出搜集的数据
+        const {mobile, password} = this
         //进行前台表单验证，如果不通过，显示提示，并结束
-        const success = await this.$validator.validateAll() // 对所有表单项进行验证
-        if (success) {
-          //取出搜集的数据
-          const {mobile, password} = this
-          try{
-            //分发注册的异步action
-            await this.$store.dispatch('login', {mobile, password})
-            //如果成功了，跳转到首页
+        try{
+          //分发注册的异步action
+          await this.$store.dispatch('login', {mobile, password})
+          //如果成功了，
+          //如果redirect参数有值，跳转到对应的路由路径，如果没有，跳转到首页
+          const redirect = this.$route.query.redirect
+          if (redirect) {
+            this.$router.replace(redirect)
+          }else {
             this.$router.replace('/')
-          }catch(error){
-            this.password = '' //如果失败，清除输入验证码
-            //如果失败了，提示失败信息
-            alert(error.message)
           }
+        }catch(error){
+          //如果失败了，提示失败信息
+          alert(error.message)
         }
       }
     },

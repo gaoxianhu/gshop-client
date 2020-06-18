@@ -10,6 +10,7 @@ import 'swiper/css/swiper.min.css'
 import './validate' //引入表单校验的配置模块
 //引入api模块中的所有分别暴露的函数，封装到API对象中
 import * as API from '@/api'
+import './elements'
 
 Vue.component('TypeNav',TypeNav)
 Vue.component('Carousel',Carousel)
